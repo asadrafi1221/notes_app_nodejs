@@ -9,15 +9,19 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f0f0f0;
+        background-color: #000000;
         display: flex;
         justify-content: center;
         flex-direction: column;
         align-items: center;
+        color: white;
         text-align: center;
       }
       h1 {
-        color: #333;
+        color: #3e3939;
+      }
+      #user_email {
+        color: #ffda08;
         margin-bottom: 20px;
       }
       #postForm {
@@ -39,7 +43,7 @@
         padding: 5px 10px;
         border: none;
         border-radius: 5px;
-        background-color: #007bff;
+        background-color: orange;
         color: white;
         font-size: 16px;
         cursor: pointer;
@@ -53,11 +57,18 @@
         flex-direction: column;
         align-items: center;
         gap: 10px;
+        padding: 10px;
+        height: 150px;
+        overflow: auto;
+        background-color: rgb(47, 44, 44);
+        border: 1px solid white;
+        border-radius: 5px;
+        scroll-behavior: smooth;
       }
       .box {
         height: 100px;
         width: 400px;
-        background-color: #ff6f61;
+        background-color: #3e3939;
         color: white;
         margin-top: 10px;
         padding: 20px;
@@ -67,6 +78,7 @@
         align-items: center;
         flex-direction: column;
         justify-content: center;
+        box-shadow: 20px 4px 2px rgba(0, 0, 0, 0.2);
         text-align: center;
       }
       .button_div {
@@ -74,21 +86,83 @@
         justify-content: space-around;
         width: 100%;
       }
+      .sort_div {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px;
+        height: 40px;
+        width: 200px;
+        background-color: rgb(76, 68, 68);
+        position: absolute;
+        border-bottom-left-radius: 10px;
+        top: 0;
+        right: 0;
+      }
+      .sort_div select {
+        background-color: rgb(255, 234, 0);
+        border: none;
+        border-radius: 5px;
+        color: rgb(0, 0, 0);
+        padding: 5px;
+        outline: none;
+      }
+      .sort_div option {
+        border-radius: 5x;
+        padding: 5px;
+        border: none;
+
+      }
+
+     
+      .sort{
+        background-color: rgb(255, 255, 255);
+        color:rgb(0, 0, 0);
+        
+        height:45px;
+        width:300px;
+        display: flex;
+justify-content: center;
+align-items: center;
+        border-radius: 10px;
+display: none;
+      }
     </style>
   </head>
   <body>
     <h1>Hello, what's on your mind?</h1>
     <p id="user_email"><%=email%></p>
     <form id="postForm">
-      <input type="text" name="post" id="postInput" placeholder="Type something..." />
+      <input
+        type="text"
+        name="post"
+        id="postInput"
+        placeholder="Type something..."
+      />
       <button type="submit">Submit</button>
     </form>
     <div class="container"></div>
+    <div class="sort"></div>
+
+    <div class="sort_div">
+      <label for="cars">Sort Notes: </label>
+      <select name="cars" id="cars">
+<option value="default">Default</option>
+        <option value="latest" id="latest">Latest</option>
+        <option value="oldest" id="oldest">Oldest</option>
+      </select>
+    </div>
 
     <script>
+      
       var email = document.querySelector("#user_email").textContent;
 
-      document.getElementById("postForm").addEventListener("submit", submit_post);
+      
+    
+
+      document
+        .getElementById("postForm")
+        .addEventListener("submit", submit_post);
 
       async function submit_post(event) {
         event.preventDefault();
@@ -96,7 +170,7 @@
         const postInput = document.getElementById("postInput");
         const postText = postInput.value.trim();
 
-        if (!postText) return; 
+        if (!postText) return;
 
         const box = document.createElement("div");
         const post = document.createElement("p");
@@ -128,7 +202,9 @@
           console.error("Error submitting post:", err);
         }
 
-        deletebutton.addEventListener("click", () => delete_post(box, postText));
+        deletebutton.addEventListener("click", () =>
+          delete_post(box, postText)
+        );
         editbutton.addEventListener("click", () => {
           const newPostText = prompt("Enter new post:");
           if (newPostText) {
@@ -146,7 +222,7 @@
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_post: postText, email }),
           });
-          boxElement.remove(); 
+          boxElement.remove();
         } catch (err) {
           console.error("Error deleting post:", err);
         }
@@ -157,7 +233,11 @@
           await fetch("http://localhost:4000/edit_post", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ post: oldPostText, newpost: newPostText, email }),
+            body: JSON.stringify({
+              post: oldPostText,
+              newpost: newPostText,
+              email,
+            }),
           });
         } catch (err) {
           console.error("Error editing post:", err);
@@ -177,9 +257,9 @@
         const data = await get_data();
         if (!data) return;
 
-        const userPosts = data.filter(item => item.email === email);
+        const userPosts = data.filter((item) => item.email === email);
 
-        userPosts.forEach(item => {
+        userPosts.forEach((item) => {
           const post_div = document.createElement("div");
           const post = document.createElement("p");
           const button_div = document.createElement("div");
@@ -198,7 +278,9 @@
           post_div.appendChild(button_div);
           document.querySelector(".container").appendChild(post_div);
 
-          deletebutton.addEventListener("click", () => delete_post(post_div, item.post));
+          deletebutton.addEventListener("click", () =>
+            delete_post(post_div, item.post)
+          );
           editbutton.addEventListener("click", () => {
             const newPostText = prompt("Enter new post:");
             if (newPostText) {
@@ -210,7 +292,59 @@
         });
       }
 
+      async function latest_note() {
+        const data = await get_data();
+        const length = data.length;
+        console.log(data);
+        const latest_post = data[length - 1];
+        console.log(latest_post)
+
+        const note_div = document.createElement("div");
+        const post = document.createElement("p");
+        post.innerHTML = latest_post.post;
+        console.log(post);
+        note_div.appendChild(post);
+
+        document.querySelector(".container").style.display = "none";
+        document.querySelector(".sort").appendChild(note_div);
+        document.querySelector('.sort').style.display='block';
+      }
+    
+      async function oldest_note() {
+        const data = await get_data();
+        const length = data.length;
+        console.log(data);
+        const latest_post = data[0];
+        console.log(latest_post)
+
+        const note_div = document.createElement("div");
+        const post = document.createElement("p");
+        post.innerHTML = latest_post.post;
+        console.log(post);
+        note_div.appendChild(post);
+
+        document.querySelector(".container").style.display = "none";
+        document.querySelector(".sort").appendChild(note_div);
+        document.querySelector('.sort').style.display='block';
+      }
+      
+      function sort_post(){
+      document.querySelector("#cars").addEventListener("change", function () {
+        const selectedValue = this.value;
+        if(selectedValue === "default"){
+          document.querySelector('.container').style.display = 'flex';
+          document.querySelector('.sort').style.display='none';
+        }
+         else if (selectedValue === "latest") {
+          latest_note();
+        }  else if (selectedValue === "oldest") {
+          oldest_note();
+        }
+      });
+    }
+      
       display_post();
+      sort_post();
     </script>
   </body>
 </html>
