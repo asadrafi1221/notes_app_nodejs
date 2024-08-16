@@ -24,7 +24,7 @@ app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(signup_router);
 app.use(notes_router);
-app.use(login_router)
+app.use(login_router);
 
 app.listen(port,()=>{
     console.log(`app is started on port no ${port}`);

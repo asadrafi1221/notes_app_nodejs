@@ -16,14 +16,44 @@
         align-items: center;
         color: white;
         text-align: center;
+  
       }
+      
       h1 {
         color: #3e3939;
+        background-color: #a1ac08;
+        border-bottom-left-radius: 10px;
+        border-bottom-right-radius: 10px;
+        position: relative;
+        top:-20px;
+        padding: 20px;
+        z-index: 10;
       }
       #user_email {
-        color: #ffda08;
-        margin-bottom: 20px;
-      }
+  color: #a1ac08;
+  margin-bottom: 20px;
+  position: relative;
+  top: -58px;
+  background-color: rgb(57, 51, 51);
+  padding: 20px;
+  z-index: -1;
+  animation: move 3s ease-in-out infinite;
+}
+
+@keyframes move {
+  0% {
+    transform: translateY(0%);
+  }
+  50% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+
+
       #postForm {
         display: flex;
         flex-direction: column;
@@ -33,8 +63,11 @@
       #postInput {
         width: 300px;
         padding: 10px;
-        border: 2px solid #ccc;
+        outline: none;
+  background-color: rgb(53, 49, 49);
+  border: none;
         border-radius: 5px;
+        color:white;
         margin-bottom: 10px;
         box-sizing: border-box;
         font-size: 16px;
@@ -111,21 +144,24 @@
         border-radius: 5x;
         padding: 5px;
         border: none;
-
       }
+      /* #check{
+        position: relative;
+        top:-45px;
+        left:115px;
+      } */
 
-     
-      .sort{
+      .sort_box {
         background-color: rgb(255, 255, 255);
-        color:rgb(0, 0, 0);
-        
-        height:45px;
-        width:300px;
+        color: rgb(0, 0, 0);
+
+        height: 45px;
+        width: 300px;
         display: flex;
-justify-content: center;
-align-items: center;
+        justify-content: center;
+        align-items: center;
         border-radius: 10px;
-display: none;
+        display: none;
       }
     </style>
   </head>
@@ -139,36 +175,41 @@ display: none;
         id="postInput"
         placeholder="Type something..."
       />
-      <button type="submit">Submit</button>
+      <button type="submit" id="check">Submit</button>
     </form>
     <div class="container"></div>
-    <div class="sort"></div>
 
     <div class="sort_div">
       <label for="cars">Sort Notes: </label>
       <select name="cars" id="cars">
-<option value="default">Default</option>
+        <option value="default">Default</option>
         <option value="latest" id="latest">Latest</option>
         <option value="oldest" id="oldest">Oldest</option>
       </select>
     </div>
 
+    <div class="error">
+      <h1>user have no post yet</h1>
+    </div>
+
+    <div class="sort_box" style="display:none;color:rgb(57, 59, 60)">
+      <p>helo</p>
+    </div>
+
+
     <script>
-      
       var email = document.querySelector("#user_email").textContent;
-
-      
-    
-
       document
         .getElementById("postForm")
+
         .addEventListener("submit", submit_post);
 
       async function submit_post(event) {
         event.preventDefault();
-
         const postInput = document.getElementById("postInput");
         const postText = postInput.value.trim();
+        document.querySelector(".container").style.display = "flex";
+        document.querySelector(".error").style.display = "none";
 
         if (!postText) return;
 
@@ -258,8 +299,14 @@ display: none;
         if (!data) return;
 
         const userPosts = data.filter((item) => item.email === email);
+        console.log(userPosts);
 
+        if (userPosts.length <= 0) {
+          document.querySelector(".error").style.display = "block";
+          document.querySelector(".container").style.display = "none";
+        }
         userPosts.forEach((item) => {
+          document.querySelector(".error").style.display = "none";
           const post_div = document.createElement("div");
           const post = document.createElement("p");
           const button_div = document.createElement("div");
@@ -295,54 +342,41 @@ display: none;
       async function latest_note() {
         const data = await get_data();
         const length = data.length;
+        document.querySelector('.container').style.display = 'none';
         console.log(data);
-        const latest_post = data[length - 1];
-        console.log(latest_post)
-
-        const note_div = document.createElement("div");
-        const post = document.createElement("p");
-        post.innerHTML = latest_post.post;
-        console.log(post);
-        note_div.appendChild(post);
-
-        document.querySelector(".container").style.display = "none";
-        document.querySelector(".sort").appendChild(note_div);
-        document.querySelector('.sort').style.display='block';
+        const latest_note = data[length-1].post;
+        console.log(latest_note);
+      document.querySelector('.sort_box').style.display = 'block';
+      document.querySelector('.sort_box').querySelector('p').innerHTML = latest_note;
       }
-    
+
       async function oldest_note() {
         const data = await get_data();
         const length = data.length;
         console.log(data);
-        const latest_post = data[0];
-        console.log(latest_post)
+        document.querySelector('.container').style.display = 'none';
+        const oldest_note = data[0].post;
+        console.log(oldest_note);
+      document.querySelector('.sort_box').style.display = 'block';
+      document.querySelector('.sort_box').querySelector('p').innerHTML = oldest_note;
 
-        const note_div = document.createElement("div");
-        const post = document.createElement("p");
-        post.innerHTML = latest_post.post;
-        console.log(post);
-        note_div.appendChild(post);
-
-        document.querySelector(".container").style.display = "none";
-        document.querySelector(".sort").appendChild(note_div);
-        document.querySelector('.sort').style.display='block';
       }
-      
-      function sort_post(){
-      document.querySelector("#cars").addEventListener("change", function () {
-        const selectedValue = this.value;
-        if(selectedValue === "default"){
-          document.querySelector('.container').style.display = 'flex';
-          document.querySelector('.sort').style.display='none';
-        }
-         else if (selectedValue === "latest") {
-          latest_note();
-        }  else if (selectedValue === "oldest") {
-          oldest_note();
-        }
-      });
-    }
-      
+
+      function sort_post() {
+        document.querySelector("#cars").addEventListener("change", function () {
+          const selectedValue = this.value;
+          if (selectedValue === "default") {
+            document.querySelector(".container").style.display = "flex";
+            document.querySelector('.sort_box').style.display = 'none';
+
+          } else if (selectedValue === "latest") {
+            latest_note();
+          } else if (selectedValue === "oldest") {
+            oldest_note();
+          }
+        });
+      }
+
       display_post();
       sort_post();
     </script>

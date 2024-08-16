@@ -1,6 +1,5 @@
 import db_data from "../../todos_proj/db_connection/db_connection.js";
 
-
 const check_user =async (req,res)=>{
     const {email} = req.body;
     console.log('email is : ');
