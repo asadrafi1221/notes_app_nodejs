@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+  </head>
+  <body>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -16,58 +18,61 @@
         align-items: center;
         color: white;
         text-align: center;
-  
       }
-      
+
       h1 {
         color: #3e3939;
         background-color: #a1ac08;
         border-bottom-left-radius: 10px;
         border-bottom-right-radius: 10px;
         position: relative;
-        top:-20px;
+        top: -20px;
         padding: 20px;
         z-index: 10;
       }
       #user_email {
-  color: #a1ac08;
-  margin-bottom: 20px;
-  position: relative;
-  top: -58px;
-  background-color: rgb(57, 51, 51);
-  padding: 20px;
-  z-index: -1;
-  animation: move 3s ease-in-out infinite;
-}
+        color: #a1ac08;
+        margin-bottom: 20px;
+        position: relative;
+        top: -58px;
+        background-color: rgb(57, 51, 51);
+        padding: 20px;
+        z-index: -1;
+        animation: move 3s ease-in-out infinite;
+      }
 
-@keyframes move {
-  0% {
-    transform: translateY(0%);
-  }
-  50% {
-    transform: translateY(-100%);
-  }
-  100% {
-    transform: translateY(0%);
-  }
-}
-
-
+      @keyframes move {
+        0% {
+          transform: translateY(0%);
+        }
+        50% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(0%);
+        }
+      }
 
       #postForm {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         align-items: center;
         margin-bottom: 20px;
+        background-color: #222020;
+        justify-content: space-around;
+        gap: 10px;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: inset -1px 1px 8px 1px black;
       }
-      #postInput {
+      input {
         width: 300px;
         padding: 10px;
         outline: none;
-  background-color: rgb(53, 49, 49);
-  border: none;
+        background-color: rgb(53, 49, 49);
+        border: none;
         border-radius: 5px;
-        color:white;
+        color: white;
         margin-bottom: 10px;
         box-sizing: border-box;
         font-size: 16px;
@@ -76,6 +81,8 @@
         padding: 5px 10px;
         border: none;
         border-radius: 5px;
+        position: relative;
+        top: -5px;
         background-color: orange;
         color: white;
         font-size: 16px;
@@ -132,7 +139,7 @@
         top: 0;
         right: 0;
       }
-      .sort_div select {
+      select {
         background-color: rgb(255, 234, 0);
         border: none;
         border-radius: 5px;
@@ -140,16 +147,16 @@
         padding: 5px;
         outline: none;
       }
-      .sort_div option {
+      option {
         border-radius: 5x;
         padding: 5px;
         border: none;
       }
       /* #check{
-        position: relative;
-        top:-45px;
-        left:115px;
-      } */
+    position: relative;
+    top:-45px;
+    left:115px;
+  } */
 
       .sort_box {
         background-color: rgb(255, 255, 255);
@@ -163,9 +170,67 @@
         border-radius: 10px;
         display: none;
       }
+      .tags_div {
+        position: absolute;
+        left: 0;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 10px;
+        height: 40px;
+        width: 200px;
+        background-color: rgb(76, 68, 68);
+        top: 0;
+        border-bottom-right-radius: 10px;
+      }
+      .tags_container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        height: 150px;
+        overflow: auto;
+        background-color: rgb(47, 44, 44);
+        border: 1px solid white;
+        border-radius: 5px;
+        scroll-behavior: smooth;
+      }
+      .tags_container div {
+        height: 100px;
+        width: 400px;
+        background-color: #3e3939;
+        color: white;
+        margin-top: 10px;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+        box-shadow: 20px 4px 2px rgba(0, 0, 0, 0.2);
+        text-align: center;
+      }
+      .tags_notfound {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgb(88, 65, 65);
+        color: yellow;
+        padding: 20px;
+        border-bottom-right-radius: 10px;
+      }
     </style>
-  </head>
-  <body>
+    <div class="tags_div">
+      <label for="prev_tag">prev_tags : </label>
+      <select name="tag" id="tag_box">
+        <option value="default">Default</option>
+      </select>
+    </div>
+    <div class="tags_notfound">
+      <p>sorry user have no tags</p>
+    </div>
     <h1>Hello, what's on your mind?</h1>
     <p id="user_email"><%=email%></p>
     <form id="postForm">
@@ -175,13 +240,28 @@
         id="postInput"
         placeholder="Type something..."
       />
+      <input
+        type="text"
+        name="tags"
+        id="tag_inp"
+        placeholder="Plz choose tag..."
+      />
+
       <button type="submit" id="check">Submit</button>
     </form>
     <div class="container"></div>
-
+    <div class="tags_container" style="display: none; color: whitesmoke"></div>
+    <div id="sort_tags" style="display: none">
+      <label for="tags">Sort tags Notes: </label>
+      <select name="sort" id="sort_tag">
+        <option value="default">Default</option>
+        <option value="latest" id="latest_note">Latest</option>
+        <option value="oldest" id="oldest_note">Oldest</option>
+      </select>
+    </div>
     <div class="sort_div">
       <label for="cars">Sort Notes: </label>
-      <select name="cars" id="cars">
+      <select name="sort" id="sort">
         <option value="default">Default</option>
         <option value="latest" id="latest">Latest</option>
         <option value="oldest" id="oldest">Oldest</option>
@@ -192,22 +272,28 @@
       <h1>user have no post yet</h1>
     </div>
 
-    <div class="sort_box" style="display:none;color:rgb(57, 59, 60)">
+    <div class="sort_box" style="display: none; color: rgb(57, 59, 60)">
       <p>helo</p>
     </div>
 
-
     <script>
       var email = document.querySelector("#user_email").textContent;
+      var userPosts = [];
+      var sort_managerarr = [];
+
       document
         .getElementById("postForm")
-
-        .addEventListener("submit", submit_post);
+        .querySelector("button")
+        .addEventListener("click", submit_post);
 
       async function submit_post(event) {
+        alert("helo");
+        document.querySelector(".tags_container").style.display = "none";
         event.preventDefault();
         const postInput = document.getElementById("postInput");
         const postText = postInput.value.trim();
+        const tag = document.getElementById("tag_inp").value.trim();
+        console.log(tag);
         document.querySelector(".container").style.display = "flex";
         document.querySelector(".error").style.display = "none";
 
@@ -237,7 +323,7 @@
           await fetch("http://localhost:4000/submit_note", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ new_post: postText, email }),
+            body: JSON.stringify({ new_post: postText, email, tag }),
           });
         } catch (err) {
           console.error("Error submitting post:", err);
@@ -298,7 +384,7 @@
         const data = await get_data();
         if (!data) return;
 
-        const userPosts = data.filter((item) => item.email === email);
+        userPosts = data.filter((item) => item.email === email);
         console.log(userPosts);
 
         if (userPosts.length <= 0) {
@@ -340,35 +426,35 @@
       }
 
       async function latest_note() {
-        const data = await get_data();
+        const data = userPosts;
         const length = data.length;
-        document.querySelector('.container').style.display = 'none';
+        document.querySelector(".container").style.display = "none";
         console.log(data);
-        const latest_note = data[length-1].post;
+        const latest_note = data[length - 1].post;
         console.log(latest_note);
-      document.querySelector('.sort_box').style.display = 'block';
-      document.querySelector('.sort_box').querySelector('p').innerHTML = latest_note;
+        document.querySelector(".sort_box").style.display = "block";
+        document.querySelector(".sort_box").querySelector("p").innerHTML =
+          latest_note;
       }
 
       async function oldest_note() {
-        const data = await get_data();
+        const data = userPosts;
         const length = data.length;
         console.log(data);
-        document.querySelector('.container').style.display = 'none';
+        document.querySelector(".container").style.display = "none";
         const oldest_note = data[0].post;
         console.log(oldest_note);
-      document.querySelector('.sort_box').style.display = 'block';
-      document.querySelector('.sort_box').querySelector('p').innerHTML = oldest_note;
-
+        document.querySelector(".sort_box").style.display = "block";
+        document.querySelector(".sort_box").querySelector("p").innerHTML =
+          oldest_note;
       }
 
       function sort_post() {
-        document.querySelector("#cars").addEventListener("change", function () {
+        document.querySelector("#sort").addEventListener("change", function () {
           const selectedValue = this.value;
           if (selectedValue === "default") {
             document.querySelector(".container").style.display = "flex";
-            document.querySelector('.sort_box').style.display = 'none';
-
+            document.querySelector(".sort_box").style.display = "none";
           } else if (selectedValue === "latest") {
             latest_note();
           } else if (selectedValue === "oldest") {
@@ -377,8 +463,104 @@
         });
       }
 
+      async function display_tags() {
+        const data_arr = await get_data();
+        const data = data_arr.filter((item) => item.email === email);
+        console.log(data);
+
+        let duplicate_tags = [];
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].tags !== null) {
+            duplicate_tags.push(data[i].tags);
+          }
+        }
+        const tag_arr = [...new Set(duplicate_tags)];
+        if (tag_arr.length >= 1) {
+          console.log(tag_arr);
+
+          let tag_box = document.querySelector("#tag_box");
+          for (let i = 0; i < tag_arr.length; i++) {
+            const opt = document.createElement("option");
+
+            opt.innerHTML = tag_arr[i];
+            opt.value = tag_arr[i];
+            console.log(tag_arr[i]);
+            tag_box.appendChild(opt);
+            document.querySelector(".tags_notfound").style.display = "none";
+          }
+
+          var selectedValue = "";
+          document
+            .querySelector("#tag_box")
+            .addEventListener("change", function () {
+              selectedValue = this.value;
+              console.log(selectedValue);
+              if (selectedValue === "default") {
+                document.querySelector(".container").style.display = "flex";
+                document.querySelector(".sort_div").style.display = "flex";
+                document.querySelector(".tags_container").style.display =
+                  "none";
+                document.getElementById("sort_tags").style.display = "none";
+              }
+
+              document.querySelector(".tags_container").textContent = "";
+              for (let i = 0; i < userPosts.length; i++) {
+                if (userPosts[i].tags === selectedValue) {
+                  console.log("helo alka");
+                  const box = document.createElement("div");
+                  document.querySelector(".container").style.display = "none";
+
+                  const para = document.createElement("p");
+                  para.innerHTML = userPosts[i].post;
+                  box.appendChild(para);
+                  sort_managerarr.push(userPosts[i].post);
+                  document.querySelector(".tags_container").appendChild(box);
+                  document.getElementById("sort_tags").style.display = "flex";
+
+                  document.querySelector(".tags_container").style.display =
+                    "flex";
+                  document.querySelector(".sort_div").style.display = "none";
+                  console.log(sort_managerarr);
+                  manage_sortfilter();
+                }
+              }
+            });
+        } else {
+          document.querySelector(".tags_notfound").style.display = "flex";
+          document.querySelector(".tags_div").style.display = "none";
+        }
+      }
+      
+      function manage_sortfilter() {
+        document
+          .querySelector("#sort_tags")
+          .querySelector("select")
+          .addEventListener("change", function () {
+            const selectedValue = this.value;
+            if (selectedValue === "default") {
+              document.querySelector(".container").style.display = "flex";
+              document.querySelector(".sort_box").style.display = "none";
+              document.querySelector('#sort_tags').style.display = 'none';
+              document.querySelector('.sort_div').style.display = 'flex';
+
+            } else if (selectedValue === "latest") {
+              document.querySelector(".tags_container").style.display =
+              "none";
+              document.querySelector('.sort_box').innerHTML = sort_managerarr.at(0);
+              document.querySelector(".sort_box").style.display = "flex";
+
+            } else if (selectedValue === "oldest") {
+              document.querySelector(".tags_container").style.display =
+              "none";
+              document.querySelector('.sort_box').innerHTML = sort_managerarr.at(-1);
+              document.querySelector(".sort_box").style.display = "flex";
+            }
+          });
+      }
       display_post();
       sort_post();
+      display_tags();
+     
     </script>
   </body>
 </html>
